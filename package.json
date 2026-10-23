@@ -1,0 +1,23 @@
+{
+  "name": "beyond-the-fold",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Beyond the Fold - a cinematic 2.5D papercraft sci-fi side-scrolling shooter",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/chakra-petch": "5.2.5",
+    "@fontsource/rajdhani": "5.2.5",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.170.0",
+    "typescript": "5.8.3",
+    "vite": "6.4.4"
+  }
+}
