@@ -192,6 +192,7 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
 
   // --- Sky layer that tracks the camera (celestial bodies are effectively at infinity).
   const sky = new THREE.Group();
+  sky.userData.noBatch = true;
   group.add(sky);
   const planetMat = new THREE.MeshBasicMaterial({ map: planetTexture(), transparent: true, fog: false });
   const planet = new THREE.Mesh(new THREE.CircleGeometry(70, 64), planetMat);
@@ -273,6 +274,7 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
 
   // --- The Crease: folded megastructure on the eastern horizon.
   const crease = new THREE.Group();
+  crease.userData.noBatch = true;
   const seamMats: THREE.MeshBasicMaterial[] = [];
   const spires: Array<[number, number, number]> = [
     [0, 110, 18],
@@ -376,6 +378,7 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
 
   // --- Paper clouds.
   const clouds = new THREE.Group();
+  clouds.userData.noBatch = true;
   for (let i = 0; i < 18; i++) {
     const c = cloud(r, r.chance(0.5) ? 0xf2c9b8 : 0xd9a8c8, r.range(1.6, 3.6));
     c.position.set(r.range(minX + 100, maxX - 100), r.range(28, 70), r.range(-200, -90));

@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { rand } from '../../core/math';
 import type { LevelData } from '../../game/types';
 import type { Renderer } from '../renderer';
+import { batchStatic } from '../batch';
 import { Shape } from '../particles';
 import { Backdrop, buildBackdrop } from './backdrop';
 import { DecorInstance, buildDecor } from './decor';
@@ -23,13 +24,22 @@ export class LevelScene {
   ) {
     this.backdrop = buildBackdrop(level, r.scene);
     this.group.add(this.backdrop.group);
-    this.group.add(buildTerrain(level));
+    // Static world geometry is merged into a few large batches to keep draw calls low.
+    const statics = new THREE.Group();
+    statics.add(buildTerrain(level));
     for (const d of level.decor) {
       const inst = buildDecor(d);
       this.decor.push(inst);
-      this.group.add(inst.obj);
-      if (inst.sway) inst.obj.userData.baseRot = inst.obj.rotation.z;
+      if (d.foreground) {
+        this.group.add(inst.obj);
+        if (inst.sway) inst.obj.userData.baseRot = inst.obj.rotation.z;
+      } else {
+        statics.add(inst.obj);
+        inst.sway = 0;
+      }
     }
+    this.group.add(batchStatic(statics));
+    this.group.add(batchStatic(this.backdrop.group, 120));
     const th = level.theme;
     r.hemi.color.setHex(th.hemiSky);
     r.hemi.groundColor.setHex(th.hemiGround);

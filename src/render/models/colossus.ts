@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { clamp, damp, lerp } from '../../core/math';
 import type { Colossus } from '../../game/boss/colossus';
 import { box, card, chamfer, gem, glow, metalPaper, outline, paper, prism, stripes } from '../paper';
+import { compactModel } from '../batch';
 
 const HULL = 0x56604f;
 const DARK = 0x2c312c;
@@ -90,6 +91,7 @@ export class ColossusModel {
     // Reactor core + chest plate.
     this.coreMat = glow(0xff7a2a, 3).clone();
     this.core = gem(0.62, this.coreMat, 1, 'ico');
+    this.core.userData.keep = true;
     this.core.position.set(1.75, -0.05, 0);
     this.hull.add(this.core);
     const cage = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8, 0), new THREE.MeshBasicMaterial({ color: 0x1a1a1a, wireframe: true }));
@@ -116,6 +118,7 @@ export class ColossusModel {
     this.hull.add(head);
     this.eyeMat = glow(0xff2020, 3.2).clone();
     this.eye = gem(0.26, this.eyeMat, 0, 'oct');
+    this.eye.userData.keep = true;
     this.eye.position.set(2.0, 1.4, 0);
     this.eye.scale.set(0.6, 1, 1.4);
     this.hull.add(this.eye);
@@ -172,6 +175,7 @@ export class ColossusModel {
         const m = glow(0xff6020, 0.8).clone();
         this.tubeMats.push(m);
         const tube = box(0.24, 0.05, 0.24, m);
+        tube.userData.keep = true;
         tube.position.set(-0.4 + c * 0.4, 0.02, -0.4 + r * 0.4);
         this.podHatch.add(tube);
       }
@@ -182,6 +186,7 @@ export class ColossusModel {
     this.podStub = chamfer(0.8, 0.4, 0.8, paper(0x1a1a1a), 0.3);
     this.podStub.position.copy(this.pod.position).add(new THREE.Vector3(0, -0.3, 0));
     this.podStub.visible = false;
+    this.podStub.userData.keep = true;
     this.hull.add(this.podStub);
 
     // Reverse-jointed legs.
@@ -242,6 +247,7 @@ export class ColossusModel {
       }
       this.legs.push({ hip, knee, ankle });
     }
+    compactModel(this.root);
     this.root.traverse((o) => {
       const m = o as THREE.Mesh;
       if (m.isMesh) {

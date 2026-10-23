@@ -9,6 +9,7 @@ import type { Bulwark } from '../../game/enemies/bulwark';
 import type { Drone } from '../../game/enemies/drone';
 import type { Ravager } from '../../game/enemies/ravager';
 import { box, card, chamfer, gem, glow, metalPaper, outline, paper, prism, shade } from '../paper';
+import { compactModel } from '../batch';
 
 export interface EnemyModel {
   root: THREE.Group;
@@ -102,6 +103,7 @@ export class ThrenModel implements EnemyModel {
     this.eyeMat = glow(pal.glowC, 2.8).clone();
     this.eyeBase.copy(this.eyeMat.color);
     this.build(pal);
+    compactModel(this.root);
     this.shield = shieldShell(0xffd060, 0.6, 1.1, 1.0);
     this.root.add(this.shield.mesh);
     this.meshes = collectMeshes(this.root);
@@ -257,6 +259,7 @@ export class ThrenModel implements EnemyModel {
     this.head.add(crest);
     for (const side of [1, -1]) {
       const eye = box(0.07, 0.035, 0.03, this.eyeMat);
+      eye.userData.keep = true;
       eye.position.set(0.2, 0.05, side * 0.11);
       this.head.add(eye);
     }
@@ -322,6 +325,7 @@ export class ThrenModel implements EnemyModel {
       gun.position.set(0.42, -0.1, 0.18);
       this.aim.add(gun);
       this.weaponGlow = gem(0.05, glow(pal.glowC, 2.6), 0, 'oct');
+      this.weaponGlow.userData.keep = true;
       this.weaponGlow.position.set(0.7, -0.07, 0.18);
       this.aim.add(this.weaponGlow);
       this.buildPanel(pal);
@@ -353,6 +357,7 @@ export class ThrenModel implements EnemyModel {
       prong.position.set(0.3, -0.1, 0.08);
       this.aim.add(prong);
       this.weaponGlow = gem(0.06, glow(pal.glowC, 2.6), 0, 'oct');
+      this.weaponGlow.userData.keep = true;
       this.weaponGlow.position.set(0.86, -0.06, 0.08);
       this.aim.add(this.weaponGlow);
     }
@@ -381,6 +386,7 @@ export class ThrenModel implements EnemyModel {
     for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i][0], pts[i][1]);
     shape.closePath();
     const face = new THREE.Mesh(new THREE.ShapeGeometry(shape), this.panelMat);
+    face.userData.keep = true;
     face.rotation.y = Math.PI / 2;
     g.add(face);
     const frame = card(
@@ -618,6 +624,7 @@ export class RavagerModel implements EnemyModel {
       outline(pl);
     }
     const vents = box(0.05, 0.3, 0.5, this.ventMat);
+    vents.userData.keep = true;
     vents.position.set(0.56, 0.5, 0);
     this.torso.add(vents);
     this.head.position.set(0.55, 0.62, 0);
@@ -638,6 +645,7 @@ export class RavagerModel implements EnemyModel {
       horn.position.set(0.0, 0.1, side * 0.18);
       this.head.add(horn);
       const eye = box(0.05, 0.05, 0.05, this.eyeMat);
+      eye.userData.keep = true;
       eye.position.set(0.33, 0.04, side * 0.1);
       this.head.add(eye);
     }
@@ -691,6 +699,7 @@ export class RavagerModel implements EnemyModel {
       this.arms.push(sh);
       this.fore.push(fg);
     }
+    compactModel(this.root);
     this.meshes = collectMeshes(this.root);
   }
 
@@ -831,6 +840,7 @@ export class DroneModel implements EnemyModel {
     this.body.add(visorPlate);
     this.eyeMat = glow(0xff2a2a, 3).clone();
     this.eye = gem(0.1, this.eyeMat, 0, 'oct');
+    this.eye.userData.keep = true;
     this.eye.position.set(0.5, 0.03, 0);
     this.body.add(this.eye);
     const fin = card(
@@ -884,6 +894,7 @@ export class DroneModel implements EnemyModel {
     thruster.position.set(-0.05, -0.38, 0);
     thruster.scale.set(1, 0.6, 1);
     this.body.add(thruster);
+    compactModel(this.root);
     this.meshes = collectMeshes(this.root);
   }
 

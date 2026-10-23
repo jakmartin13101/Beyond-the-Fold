@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { Rng } from '../../core/math';
 import { box, card, chamfer, edgeColor, foldedRockGeo, gem, glow, labelTexture, metalPaper, outline, paper, prism, stripes } from '../paper';
 import { buildWeaponModel } from './weapons';
+import { compactModel } from '../batch';
 
 export function buildBarrel(): THREE.Group {
   const g = new THREE.Group();
@@ -26,6 +27,7 @@ export function buildBarrel(): THREE.Group {
   const warn = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.36), new THREE.MeshBasicMaterial({ map: labelTexture('⚠', '#ffde4a', 'rgba(0,0,0,0)', 128, 128, 'bold 96px sans-serif'), transparent: true }));
   warn.position.set(0, 0.75, 0.42);
   g.add(warn);
+  compactModel(g);
   return g;
 }
 
@@ -64,6 +66,7 @@ export function buildCrate(small: boolean, seed = 1): THREE.Group {
   );
   label.position.set(0, h * 0.5, d / 2 + 0.012);
   g.add(label);
+  compactModel(g);
   return g;
 }
 
@@ -86,6 +89,7 @@ export function buildBarricade(): THREE.Group {
   const st = box(1.0, 0.12, 1.22, stripes());
   st.position.y = 0.85;
   g.add(st);
+  compactModel(g);
   return g;
 }
 
@@ -101,6 +105,7 @@ export function buildSandbags(): THREE.Group {
       g.add(bag);
     }
   }
+  compactModel(g);
   return g;
 }
 
@@ -132,6 +137,7 @@ export function buildFuelTank(): THREE.Group {
   lamp.name = 'glow';
   lamp.position.set(0, 3.1, 0);
   g.add(lamp);
+  compactModel(g);
   return g;
 }
 
@@ -151,6 +157,7 @@ export function buildVent(): THREE.Group {
   mouth.rotation.x = -Math.PI / 2;
   mouth.position.y = 0.04;
   g.add(mouth);
+  compactModel(g);
   return g;
 }
 
@@ -173,6 +180,7 @@ export function buildCrumble(w: number, h: number, seed: number): THREE.Group {
   const grass = box(w * 1.02, 0.08, 2.42, paper(0x2f8f86));
   grass.position.y = -0.03;
   g.add(grass);
+  compactModel(g);
   return g;
 }
 
@@ -207,6 +215,7 @@ export function buildBeacon(): THREE.Group {
   const mast = prism(0.015, 0.015, 0.7, 4, paper(0x222222));
   mast.position.y = 1.85;
   g.add(mast);
+  compactModel(g);
   return g;
 }
 
@@ -314,6 +323,7 @@ export function buildPickup(type: string, weaponId: string | null, grenade: stri
       break;
     }
   }
+  compactModel(g);
   return g;
 }
 
@@ -335,6 +345,7 @@ export function buildGrenade(kind: string): THREE.Group {
     lamp.position.set(0, 0.06, 0.12);
     g.add(lamp);
   }
+  compactModel(g);
   return g;
 }
 
@@ -453,5 +464,6 @@ export function buildDropship(wrecked: boolean): THREE.Group {
       g.add(shard);
     }
   }
+  compactModel(g);
   return g;
 }

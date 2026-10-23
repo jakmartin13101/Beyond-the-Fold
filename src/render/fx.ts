@@ -165,10 +165,10 @@ export class Fx {
     const [mr, mg, mb] = c3(main, 2.4);
     const [dr, dg, db] = c3(deep, 1.6);
     // Flash.
-    add.spawn({ x, y, z: zz, life: 0.12, size0: R * 1.8, size1: R * 2.6, r: hr, g: hg, b: hb, a0: 1, a1: 0, shape: Shape.Glow });
-    add.spawn({ x, y, z: zz + 0.1, life: 0.08, size0: R * 1.4, size1: R * 0.6, r: hr, g: hg, b: hb, a0: 1, a1: 0, rot: rand(0, 6), shape: Shape.Star });
+    add.spawn({ x, y, z: zz, life: 0.12, size0: R * 1.3, size1: R * 2.0, r: hr, g: hg, b: hb, a0: 0.8, a1: 0, shape: Shape.Glow });
+    add.spawn({ x, y, z: zz + 0.1, life: 0.08, size0: R * 1.0, size1: R * 0.5, r: hr, g: hg, b: hb, a0: 1, a1: 0, rot: rand(0, 6), shape: Shape.Star });
     // Fireball: layered glowing puffs.
-    for (let i = 0; i < this.n(10 + R * 3); i++) {
+    for (let i = 0; i < this.n(8 + R * 2); i++) {
       const a = rand(0, Math.PI * 2);
       const sp = rand(0.5, 1.6) * R;
       add.spawn({

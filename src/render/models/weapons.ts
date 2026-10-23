@@ -3,6 +3,7 @@
 // and 'muzzle' (barrel tip marker).
 import * as THREE from 'three';
 import { Pt, box, card, chamfer, gem, glow, metalPaper, paper, prism } from '../paper';
+import { compactModel } from '../batch';
 
 const GUN = 0x3d434c;
 const DARK = 0x23272d;
@@ -346,5 +347,6 @@ export function buildWeaponModel(id: string): THREE.Group {
   const b = builders[id] ?? builders.ar;
   const g = b();
   g.name = 'weapon:' + id;
+  compactModel(g);
   return g;
 }

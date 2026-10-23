@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { clamp, damp, dampAngle, lerp } from '../../core/math';
 import { box, card, chamfer, gem, glow, outline, paper, prism, shade } from '../paper';
 import { buildWeaponModel } from './weapons';
+import { compactModel } from '../batch';
 
 export interface SoldierColors {
   primary: number;
@@ -354,6 +355,7 @@ export class SoldierModel {
     this.weaponMount.position.set(0.32, -0.1, 0.12);
     this.aim.add(this.weaponMount);
 
+    compactModel(this.root);
     this.root.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) this.materialsToTint.push(o as THREE.Mesh);
     });
