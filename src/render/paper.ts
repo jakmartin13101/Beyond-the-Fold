@@ -429,6 +429,7 @@ export function foldedRockGeo(w: number, h: number, d: number, seed: number, seg
   }
   const g = base.toNonIndexed();
   g.computeVertexNormals();
+  planarUV(g);
   geoCache.set(key, g);
   return g;
 }
@@ -476,4 +477,34 @@ export function glowTexture(): THREE.Texture {
   ctx.fillRect(0, 0, 128, 128);
   glowTex = new THREE.CanvasTexture(c);
   return glowTex;
+}
+
+/** Re-map UVs from world-space positions (by dominant normal) so paper grain keeps a constant scale. */
+export function planarUV(g: THREE.BufferGeometry, offset = new THREE.Vector3()): THREE.BufferGeometry {
+  const pos = g.attributes.position as THREE.BufferAttribute;
+  if (!g.attributes.normal) g.computeVertexNormals();
+  const nrm = g.attributes.normal as THREE.BufferAttribute;
+  let uv = g.attributes.uv as THREE.BufferAttribute | undefined;
+  if (!uv) {
+    uv = new THREE.BufferAttribute(new Float32Array(pos.count * 2), 2);
+    g.setAttribute('uv', uv);
+  }
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i) + offset.x;
+    const y = pos.getY(i) + offset.y;
+    const z = pos.getZ(i) + offset.z;
+    const ax = Math.abs(nrm.getX(i));
+    const ay = Math.abs(nrm.getY(i));
+    const az = Math.abs(nrm.getZ(i));
+    if (ay >= ax && ay >= az) uv.setXY(i, x, z);
+    else if (ax >= az) uv.setXY(i, z, y);
+    else uv.setXY(i, x, y);
+  }
+  uv.needsUpdate = true;
+  return g;
+}
+
+/** Box geometry with world-scaled UVs. */
+export function wbox(w: number, h: number, d: number): THREE.BufferGeometry {
+  return planarUV(new THREE.BoxGeometry(w, h, d));
 }

@@ -165,7 +165,7 @@ export class Player extends Actor {
   }
 
   shoulderY(): number {
-    return this.y + this.h * (this.crouching ? 0.72 : 0.76);
+    return this.y + this.h * (this.crouching ? 0.78 : 0.76);
   }
 
   muzzleLength(): number {
@@ -179,7 +179,7 @@ export class Player extends Actor {
       case 'sniper':
         return 1.55;
       case 'rocket':
-        return 1.2;
+        return 1.05;
       case 'br':
         return 1.2;
       default:
