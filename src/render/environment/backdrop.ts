@@ -188,7 +188,7 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
   const th = level.theme;
   const group = new THREE.Group();
   scene.background = skyTexture(th.skyTop, th.skyMid, th.skyHorizon);
-  scene.fog = new THREE.Fog(th.fog, 60, 430);
+  scene.fog = new THREE.Fog(th.fog, 24, 330);
 
   // --- Sky layer that tracks the camera (celestial bodies are effectively at infinity).
   const sky = new THREE.Group();
@@ -322,29 +322,41 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
     depthWrite: false,
     fog: false,
   });
-  const beam = new THREE.Mesh(new THREE.PlaneGeometry(12, 600), beamMat);
+  const beam = new THREE.Mesh(new THREE.PlaneGeometry(26, 600), beamMat);
   beam.position.set(0, 300, 2);
   crease.add(beam);
   // Unfolding petals revealed in the finale.
   const petals: THREE.Mesh[] = [];
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 10; i++) {
     const pm = card(
       [
         [0, 0],
-        [26, 6],
-        [44, 0],
-        [26, -6],
+        [46, 12],
+        [88, 0],
+        [46, -12],
       ],
       1,
-      0x5a4a88,
+      i % 2 ? 0x6a5aa0 : 0x4a3a78,
       { edge: 0x9ff8ff, shadow: false },
     );
     pm.position.set(0, 120, 0);
-    pm.rotation.z = (i / 8) * Math.PI * 2;
+    pm.rotation.z = (i / 10) * Math.PI * 2;
     pm.scale.setScalar(0.001);
     crease.add(pm);
     petals.push(pm);
   }
+  const pulseMat = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(0x9ff8ff).multiplyScalar(2),
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    fog: false,
+  });
+  const pulse = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 6), pulseMat);
+  pulse.position.set(0, 120, 1);
+  crease.add(pulse);
   crease.position.set(0, -6, -300);
   crease.traverse((o) => {
     const m = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
@@ -359,7 +371,8 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
   group.add(mountainLayer(minX, maxX, -240, -6, 46, 0x6d4a86, 31, 70));
   group.add(mountainLayer(minX, maxX, -170, -8, 34, 0x5a3a78, 32, 50));
   group.add(mountainLayer(minX + 60, maxX - 60, -110, -10, 24, 0x4a2e66, 33, 34));
-  group.add(mountainLayer(level.bounds.minX - 80, level.bounds.maxX + 90, -60, -10, 14, 0x3a2456, 34, 20));
+  group.add(mountainLayer(level.bounds.minX - 140, level.bounds.maxX + 140, -60, -10, 14, 0x3a2456, 34, 20));
+  group.add(mountainLayer(level.bounds.minX - 90, level.bounds.maxX + 90, -34, -14, 15, 0x2e1c46, 35, 9));
 
   // --- Paper clouds.
   const clouds = new THREE.Group();
@@ -406,9 +419,13 @@ export function buildBackdrop(level: LevelData, scene: THREE.Scene): Backdrop {
       for (let i = 0; i < petals.length; i++) {
         const k = Math.max(0, Math.min(1, awakened * 1.4 - i * 0.05));
         petals[i].scale.setScalar(0.001 + k);
-        petals[i].rotation.z = (i / 8) * Math.PI * 2 + time * 0.05 * awakened;
+        petals[i].rotation.z = (i / 10) * Math.PI * 2 + time * 0.05 * awakened;
       }
       beamMat.opacity = awakened * (0.6 + Math.sin(time * 8) * 0.1);
+      const pk = (time * 0.35) % 1;
+      pulse.scale.setScalar(20 + pk * 260);
+      pulseMat.opacity = awakened * (1 - pk) * 0.8;
+      halo.scale.setScalar(1 + awakened * 1.5);
     },
     awaken(k: number) {
       awakened = k;

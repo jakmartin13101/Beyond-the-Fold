@@ -410,6 +410,38 @@ class SimpleView implements EntityView {
   }
 }
 
+let curtainTex: THREE.Texture | null = null;
+function curtainTexture(): THREE.Texture {
+  if (curtainTex) return curtainTex;
+  const c = document.createElement('canvas');
+  c.width = 64;
+  c.height = 256;
+  const ctx = c.getContext('2d')!;
+  const g = ctx.createLinearGradient(0, 0, 64, 0);
+  g.addColorStop(0, 'rgba(255,255,255,0)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.35)');
+  g.addColorStop(0.5, 'rgba(255,255,255,0.9)');
+  g.addColorStop(0.65, 'rgba(255,255,255,0.35)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 256);
+  ctx.globalCompositeOperation = 'destination-out';
+  for (let y = 0; y < 256; y += 8) {
+    ctx.fillStyle = `rgba(0,0,0,${0.25 + (y % 32 === 0 ? 0.4 : 0)})`;
+    ctx.fillRect(0, y, 64, 3);
+  }
+  curtainTex = new THREE.CanvasTexture(c);
+  curtainTex.wrapT = THREE.RepeatWrapping;
+  curtainTex.repeat.set(1, 3);
+  return curtainTex;
+}
+
+let postMat: THREE.Material | null = null;
+function metalPost(): THREE.Material {
+  if (!postMat) postMat = new THREE.MeshStandardMaterial({ color: 0x3a3f45, roughness: 0.5, metalness: 0.5, flatShading: true });
+  return postMat;
+}
+
 const colorCache = new Map<number, THREE.Color>();
 function colorOf(hex: number): THREE.Color {
   let c = colorCache.get(hex);
@@ -628,29 +660,40 @@ export class GameView {
       });
     }
     if (e instanceof Barrier) {
-      const mat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(0x5ff2ff).multiplyScalar(1.6),
-        transparent: true,
-        opacity: 0,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-      });
+      // Hard-light curtain: camera-facing sheets on both lanes with emitter posts.
+      const tex = curtainTexture();
       const g = new THREE.Group();
-      const wall = new THREE.Mesh(new THREE.PlaneGeometry(6.6, e.height, 1, 1), mat);
-      wall.rotation.y = Math.PI / 2;
-      wall.position.y = e.height / 2;
-      g.add(wall);
-      const hexes = new THREE.Mesh(new THREE.PlaneGeometry(6.6, e.height, 6, 9), new THREE.MeshBasicMaterial({ color: 0x5ff2ff, wireframe: true, transparent: true, opacity: 0 }));
-      hexes.rotation.y = Math.PI / 2;
-      hexes.position.y = e.height / 2;
-      g.add(hexes);
+      const mats: THREE.MeshBasicMaterial[] = [];
+      for (const z of [0.5, -3.7]) {
+        const mat = new THREE.MeshBasicMaterial({
+          map: tex,
+          color: new THREE.Color(0x5ff2ff).multiplyScalar(1.8),
+          transparent: true,
+          opacity: 0,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        });
+        mats.push(mat);
+        const sheet = new THREE.Mesh(new THREE.PlaneGeometry(1.1, e.height), mat);
+        sheet.position.set(0, e.height / 2, z - e.z);
+        g.add(sheet);
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.35, 0.5), metalPost());
+        post.position.set(0, 0.17, z - e.z);
+        g.add(post);
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.35, 0.5), metalPost());
+        cap.position.set(0, e.height, z - e.z);
+        g.add(cap);
+      }
       return new SimpleView(g, e, this, (_root, dt, time) => {
-        const target = e.on ? 0.22 + Math.sin(time * 4) * 0.05 : 0;
-        mat.opacity += (target - mat.opacity) * Math.min(1, dt * 6);
-        (hexes.material as THREE.MeshBasicMaterial).opacity = mat.opacity * 1.8;
-        g.visible = mat.opacity > 0.01;
-        if (e.on) gv.r.lightPool.push({ x: e.x, y: e.y + 2, z: -1.6, color: 0x5ff2ff, intensity: 5, distance: 7 });
+        const target = e.on ? 0.75 + Math.sin(time * 6) * 0.1 : 0;
+        for (const mat of mats) {
+          mat.opacity += (target - mat.opacity) * Math.min(1, dt * 5);
+          if (mat.map) mat.map.offset.y = -time * 0.4;
+        }
+        const vis = mats[0].opacity > 0.01;
+        g.children.forEach((c, i) => (c.visible = i % 3 === 0 ? vis : true));
+        if (e.on) gv.r.lightPool.push({ x: e.x, y: e.y + 2, z: 0, color: 0x5ff2ff, intensity: 6, distance: 7 });
       });
     }
     if (e instanceof CheckpointBeacon) {

@@ -148,10 +148,10 @@ export class Colossus extends Actor {
         this.staggerT = Math.max(this.staggerT, 1.0);
       }
     } else if (part === 'weak') {
-      toHealth = amount * (d.type === 'kinetic' ? d.headshotMult * 0.9 : 1.2);
+      toHealth = amount * (d.type === 'kinetic' ? d.headshotMult * 0.45 : 0.8);
       hitPart = 'eye';
     } else if (part === 'core') {
-      toHealth = amount * 1.6 * (explosive ? 1.4 : 1);
+      toHealth = amount * 1.2 * (explosive ? 1.4 : 1);
     } else {
       toHealth = amount * 0.22 * d.armorMult;
     }

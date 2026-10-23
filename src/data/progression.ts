@@ -64,7 +64,7 @@ export interface ArmorScheme {
 }
 
 export const ARMOR_SCHEMES: ArmorScheme[] = [
-  { id: 'kestrel', name: 'Kestrel Standard', primary: 0x5d6f7c, secondary: 0x3b4650, accent: 0xe8772e, unlock: 'Default' },
+  { id: 'kestrel', name: 'Kestrel Standard', primary: 0x8a9eae, secondary: 0x4d5a66, accent: 0xff8a3a, unlock: 'Default' },
   { id: 'arctic', name: 'Arctic Survey', primary: 0xd9dde0, secondary: 0x8b97a0, accent: 0x2f8fd8, unlock: 'Default' },
   { id: 'nightops', name: 'Night Operations', primary: 0x2c3036, secondary: 0x1a1d22, accent: 0x5ff2ff, unlock: 'Complete Mission 01' },
   { id: 'ember', name: 'Ember Guard', primary: 0x8c3b2a, secondary: 0x4a2219, accent: 0xffc24a, unlock: 'Earn rank A or better' },

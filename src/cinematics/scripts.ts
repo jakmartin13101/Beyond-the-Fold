@@ -75,7 +75,7 @@ export function introCutscene(h: CineHost): Cutscene {
     .at(11.6, () => h.radio.push('intro_3'))
     // Plasma flak.
     .during(11.5, 15, (k) => {
-      if (Math.random() < 0.35 + k * 0.4) flak(h, ship.position);
+      if (Math.random() < 0.18 + k * 0.25) flak(h, ship.position);
     })
     .at(12.6, () => h.radio.push('intro_4'))
     .at(13.2, () => {
@@ -181,8 +181,8 @@ function flak(h: CineHost, target: THREE.Vector3): void {
     shape: Shape.Glow,
   });
   window.setTimeout(() => {
-    h.renderer.additive.spawn({ x: tx, y: ty, z: target.z, life: 0.35, size0: 1.5, size1: 4, r: 1, g: 2.6, b: 0.6, a0: 0.9, a1: 0, shape: Shape.Glow });
-    h.renderer.additive.spawn({ x: tx, y: ty, z: target.z, life: 0.3, size0: 0.8, size1: 5, r: 0.8, g: 2, b: 0.5, a0: 0.6, a1: 0, shape: Shape.Ring });
+    h.renderer.additive.spawn({ x: tx, y: ty, z: target.z, life: 0.3, size0: 1.2, size1: 2.6, r: 1, g: 2.6, b: 0.6, a0: 0.8, a1: 0, shape: Shape.Glow });
+    h.renderer.additive.spawn({ x: tx, y: ty, z: target.z, life: 0.12, size0: 1.4, size1: 0.5, r: 2, g: 2.6, b: 1.2, a0: 1, a1: 0, shape: Shape.Star, rot: Math.random() * 6 });
     h.renderer.lightPool.flash(tx, ty, target.z, 0x9dff4a, 25, 18, 0.3);
     h.sound('flak', tx);
   }, (d / sp) * 1000);
@@ -283,7 +283,7 @@ export function outroCutscene(h: CineHost, onDone: () => void): Cutscene {
     .during(3.4, 16, () => {
       if (Math.random() < 0.05) h.shake(0.25);
     })
-    .camera(4, 9, { pos: [px - 2, 3, 14], target: [px, 2.2, 0], fov: 36 }, { pos: [px - 14, 6, 34], target: [px + 20, 40, -300], fov: 46 })
+    .camera(4, 9, { pos: [px - 2, 3, 14], target: [px, 2.2, 0], fov: 36 }, { pos: [px - 6, 2.5, 30], target: [px + 4, 75, -300], fov: 52 })
     .at(6, () => {
       h.radio.push('end_3');
       h.sting('reveal');
@@ -294,10 +294,10 @@ export function outroCutscene(h: CineHost, onDone: () => void): Cutscene {
       h.flash(0.5);
       h.shake(0.6);
     })
-    .camera(9, 16, { pos: [px - 14, 6, 34], target: [px + 20, 40, -300], fov: 46 }, { pos: [px - 18, 4, 40], target: [px + 20, 55, -300], fov: 50 })
+    .camera(9, 16, { pos: [px - 6, 2.5, 30], target: [px + 4, 75, -300], fov: 52 }, { pos: [px - 10, 2, 38], target: [px + 4, 95, -300], fov: 58 })
     .at(12.5, () => h.radio.push('end_5'))
     .at(17.5, () => h.radio.push('end_6'))
-    .camera(16, 21, { pos: [px - 18, 4, 40], target: [px + 20, 55, -300], fov: 50 }, { pos: [px + 2, 2.2, 9], target: [px + 4, 2.6, -4], fov: 34 })
+    .camera(16, 21, { pos: [px - 10, 2, 38], target: [px + 4, 95, -300], fov: 58 }, { pos: [px + 2, 2.2, 9], target: [px + 4, 2.6, -4], fov: 34 })
     .at(16.2, () => {
       p.victory = false;
       p.facing = 1;

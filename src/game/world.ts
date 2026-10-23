@@ -605,7 +605,7 @@ export class World {
   damageTarget(target: Damageable, part: HitPart, info: DamageInfo, tag?: string): void {
     const r = target.applyDamage(info, part, this, tag);
     if (info.byPlayer && target.faction !== 'player') {
-      if (!info.explosive && info.weaponId) this.stats.shotsHit++;
+      if (!info.explosive && info.weaponId && target.faction !== 'neutral') this.stats.shotsHit++;
       if (target.faction !== 'neutral' && (r.dealt > 0 || r.shieldHit || r.blocked)) {
         this.events.emit('hitmarker', { kill: r.killed, headshot: r.headshot, shield: r.shieldHit || r.blocked });
       }

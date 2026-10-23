@@ -84,6 +84,7 @@ export class Renderer {
   readonly sun: THREE.DirectionalLight;
   readonly rim: THREE.DirectionalLight;
   readonly lightPool: LightPool;
+  readonly heroLight: THREE.PointLight;
   readonly additive: BillboardBatch;
   readonly alpha: BillboardBatch;
   readonly debris: DebrisSystem;
@@ -101,7 +102,7 @@ export class Renderer {
     this.settings = settings;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 1.22;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.shadowMap.enabled = settings.shadows;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -112,9 +113,9 @@ export class Renderer {
     this.camera.position.set(0, 4, 22);
 
     // Lighting rig: warm low sun, purple sky fill, cool rim from behind.
-    this.hemi = new THREE.HemisphereLight(0x8f8ad8, 0x3a2236, 1.1);
+    this.hemi = new THREE.HemisphereLight(0x8f8ad8, 0x3a2236, 1.5);
     this.scene.add(this.hemi);
-    this.sun = new THREE.DirectionalLight(0xffc48a, 2.6);
+    this.sun = new THREE.DirectionalLight(0xffc48a, 3.1);
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.bias = -0.0004;
@@ -127,11 +128,14 @@ export class Renderer {
     sc.near = 1;
     sc.far = 140;
     this.scene.add(this.sun, this.sun.target);
-    this.rim = new THREE.DirectionalLight(0x7fd0ff, 0.9);
+    this.rim = new THREE.DirectionalLight(0x7fd0ff, 1.7);
     this.rim.position.set(-20, 18, -30);
     this.scene.add(this.rim, this.rim.target);
 
     this.lightPool = new LightPool(this.scene, settings.quality === 'low' ? 4 : 8);
+    // Soft "hero" fill that follows the player so the soldier always reads clearly.
+    this.heroLight = new THREE.PointLight(0xfff0dc, 7, 9, 1.4);
+    this.scene.add(this.heroLight);
 
     this.additive = new BillboardBatch(settings.quality === 'low' ? 1500 : 3000, true);
     this.alpha = new BillboardBatch(settings.quality === 'low' ? 600 : 1200, false);

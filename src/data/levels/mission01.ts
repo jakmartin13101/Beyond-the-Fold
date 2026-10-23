@@ -92,8 +92,7 @@ function buildDecor(): DecorDef[] {
     add({ type: 'fern', x, y: y - 0.4, z: r.range(4.2, 5.2), scale: r.range(1.6, 2.3), seed: r.int(0, 9999), foreground: true });
     if (r.chance(0.6)) add({ type: 'grass', x: x + r.range(1, 2.5), y: y - 0.3, z: r.range(3.5, 4.2), scale: r.range(1.2, 1.6), seed: r.int(0, 9999), foreground: true });
   }
-  add({ type: 'girder', x: 216, y: 9, z: 4.5, scale: 1.3, foreground: true });
-  add({ type: 'girder', x: 318, y: 10, z: 4.8, scale: 1.5, foreground: true, rot: 0.2 });
+  add({ type: 'girder', x: 214, y: 12.5, z: 4.5, scale: 1.1, foreground: true });
   add({ type: 'vines', x: 36, y: 12, z: 4, scale: 1.4, foreground: true, seed: 4 });
   add({ type: 'vines', x: 140, y: 13, z: 3.6, scale: 1.6, foreground: true, seed: 9 });
 
@@ -213,7 +212,11 @@ export const MISSION_01: LevelData = {
     { type: 'health', x: 299.5, y: 0.4, lane: 1, id: 'med_arena' },
   ],
   decor: buildDecor(),
-  checkpoints: [{ id: 'cp_ridge', x: 166, y: 1.2, lane: 0 }],
+  checkpoints: [
+    { id: 'cp_chasm', x: 108.5, y: 1.2, lane: 0 },
+    { id: 'cp_ridge', x: 166, y: 1.2, lane: 0 },
+    { id: 'cp_yard', x: 288.5, y: 1.2, lane: 0 },
+  ],
   enemies: [],
   encounters: [
     {

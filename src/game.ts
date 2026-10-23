@@ -71,6 +71,8 @@ export class Game implements CineHost {
   private app: HTMLElement;
   private missionStartStats = { intelBefore: 0 };
   private pendingIntel: string | null = null;
+  /** Test hook: overrides merged into player controls each step. */
+  debugControls: Partial<PlayerControls> | null = null;
   private newlyCollected = new Set<string>();
 
   constructor(app: HTMLElement) {
@@ -489,6 +491,7 @@ export class Game implements CineHost {
       return;
     }
     w.player.controls = this.state === 'playing' ? this.buildControls() : emptyControls(w.player.x + w.player.facing * 5, w.player.shoulderY());
+    if (this.debugControls && this.state === 'playing') Object.assign(w.player.controls, this.debugControls);
     w.update(STEP);
     if (this.cutscene) {
       this.cutscene.update(STEP);
@@ -612,6 +615,11 @@ export class Game implements CineHost {
       if (this.state === 'cutscene' || p.dead) this.aimDir.x = this.aimDir.y = 0;
       this.camera.update(dt, w, alpha, this.aimDir);
       this.renderer.shadowFocus.set(this.camera.x, this.camera.y, 0);
+      const hp = this.view.playerView?.root.position;
+      if (hp) {
+        this.renderer.heroLight.position.set(hp.x + p.facing * 0.6, hp.y + 2.8, hp.z + 3.2);
+        this.renderer.heroLight.intensity = p.dead ? 2 : 7;
+      }
       this.view.update(alpha, dt);
       this.audioDir?.update(dt, this.camera.x, this.camera.y);
       this.level.update(dt, this.camera.x, this.camera.y, p.x, p.y, this.camera.halfWidth());
@@ -671,6 +679,7 @@ export class Game implements CineHost {
     this.camera.cineBlend = 1;
     this.camera.update(dt, null, 1, { x: 0, y: 0 });
     this.renderer.shadowFocus.set(x + 6, 2, 0);
+    this.renderer.heroLight.intensity = 0;
     this.level.update(dt, x + 6, 3, -1000, -1000, 20);
   }
 

@@ -66,7 +66,7 @@ export class Hud {
     this.root.id = 'hud';
     this.root.innerHTML = `
       <div class="hud-panel vitals">
-        <div class="callsign"><span>KESTREL · W-COMMANDO</span><span data-k="lane">FRONT</span></div>
+        <div class="callsign"><span>KESTREL</span><span data-k="lane">FRONT</span></div>
         <div class="bar-label">SHIELD</div>
         <div class="bar shield" data-k="shieldBar"><div class="ghost" data-k="shieldGhost"></div><div class="fill" data-k="shieldFill"></div><div class="segs"></div></div>
         <div class="bar-label">VITALS</div>

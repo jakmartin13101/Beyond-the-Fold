@@ -415,8 +415,8 @@ function lamp(): THREE.Group {
 
 function vines(r: Rng): THREE.Group {
   const g = new THREE.Group();
-  for (let i = 0; i < 6; i++) {
-    const len = r.range(3, 8);
+  for (let i = 0; i < 4; i++) {
+    const len = r.range(2, 4.5);
     const v = card(
       [
         [-0.06, 0],
@@ -430,7 +430,7 @@ function vines(r: Rng): THREE.Group {
     );
     v.position.set(r.range(-3, 3), 0, r.range(-0.3, 0.3));
     g.add(v);
-    for (let k = 0; k < 4; k++) {
+    for (let k = 0; k < 3; k++) {
       const leaf = card(
         [
           [0, 0],

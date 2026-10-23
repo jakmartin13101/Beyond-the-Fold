@@ -10,7 +10,7 @@ export interface CinematicShot {
   fov: number;
 }
 
-const BASE_DIST = 21;
+const BASE_DIST = 23.5;
 const BASE_FOV = 36;
 
 export class CameraController {
@@ -59,7 +59,12 @@ export class CameraController {
       }
     }
     if (world.cameraOverride) z = world.cameraOverride.zoom;
-    if (world.boss && world.boss.active && !world.boss.dead) z = 1.38;
+    const boss = world.boss;
+    if (boss && boss.active && !boss.dead) {
+      // Frame both the player and the walker.
+      const span = Math.abs(boss.x - p.x) / 2 + 7;
+      z = clamp(span / this.baseHalfWidth(), 1.3, 1.7);
+    }
     const w = p.weapon;
     if (w && w.def.zoom) z *= w.def.zoom;
     return z;
@@ -81,10 +86,10 @@ export class CameraController {
       const px = p.px + (p.x - p.px) * alpha;
       const py = p.py + (p.y - p.py) * alpha;
       // Look-ahead toward where the player is aiming.
-      const ahead = clamp(aimDir.x, -1, 1) * 3.2 + clamp(p.vx * 0.12, -1.2, 1.2);
+      const ahead = clamp(aimDir.x, -1, 1) * 5.5 + clamp(p.vx * 0.15, -1.4, 1.4);
       this.lookX = damp(this.lookX, ahead, 2.2, dt);
       let tx = px + this.lookX;
-      let ty = py + 1.7 + this.zoneYOffset(world) + clamp(aimDir.y, -1, 1) * 0.8;
+      let ty = py + 1.9 + this.zoneYOffset(world) + clamp(aimDir.y, -1, 1) * 1.2;
       this.zoom = damp(this.zoom, this.zoneZoom(world), 1.6, dt);
 
       const halfW = this.halfWidth();
@@ -99,9 +104,9 @@ export class CameraController {
       const boss = world.boss;
       if (boss && boss.active && !boss.dead) {
         const a = world.level.boss!.arena;
-        tx = lerp(px, boss.x, 0.35);
-        tx = clamp(tx, a.left + halfW - 2, a.right - halfW + 2);
-        ty = Math.max(ty, boss.y + 3.2);
+        tx = lerp(px, boss.x, 0.5);
+        tx = clamp(tx, a.left + halfW - 3, a.right - halfW + 3);
+        ty = Math.max(ty, boss.y + 3.6);
       }
       // Never show past the level bounds.
       const b = world.level.bounds;
@@ -155,6 +160,11 @@ export class CameraController {
       cam.fov = this.current.fov;
       cam.updateProjectionMatrix();
     }
+  }
+
+  private baseHalfWidth(): number {
+    const h = 2 * BASE_DIST * Math.tan((BASE_FOV * Math.PI) / 360);
+    return (h * this.camera.aspect) / 2;
   }
 
   /** Half the visible width of the gameplay plane at the current zoom. */
