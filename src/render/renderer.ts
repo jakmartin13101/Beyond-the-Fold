@@ -92,6 +92,13 @@ export class Renderer {
   private width = 1;
   private height = 1;
   private settings: Settings;
+  /** Automatic resolution multiplier (lowered when frames run long). */
+  dynamicScale = 1;
+  /** Disable to pin the resolution (benchmarks, capture). */
+  adaptive = true;
+  private frameAvg = 1 / 60;
+  private slowT = 0;
+  private fastT = 0;
   /** World-space anchor that the shadow camera follows. */
   shadowFocus = new THREE.Vector3();
 
@@ -191,8 +198,8 @@ export class Renderer {
     const h = this.container.clientHeight || window.innerHeight;
     this.width = w;
     this.height = h;
-    const cap = this.settings.quality === 'high' ? 2 : this.settings.quality === 'medium' ? 1.5 : 1;
-    const pr = Math.min(window.devicePixelRatio || 1, cap) * this.settings.resolutionScale;
+    const cap = this.settings.quality === 'high' ? 1.75 : this.settings.quality === 'medium' ? 1.25 : 1;
+    const pr = Math.min(window.devicePixelRatio || 1, cap) * this.settings.resolutionScale * this.dynamicScale;
     this.renderer.setPixelRatio(pr);
     this.renderer.setSize(w, h);
     this.composer.setPixelRatio(pr);
@@ -219,7 +226,31 @@ export class Renderer {
     this.rim.position.set(fx - 22, fy + 16, -34);
   }
 
+  /** Adapt resolution to keep frame pacing smooth on slower GPUs. */
+  private adaptResolution(dt: number): void {
+    if (!this.adaptive || dt <= 0 || dt > 0.25) return;
+    this.frameAvg += (dt - this.frameAvg) * 0.05;
+    if (this.frameAvg > 1 / 45) {
+      this.slowT += dt;
+      this.fastT = 0;
+      if (this.slowT > 2.5 && this.dynamicScale > 0.6) {
+        this.dynamicScale = Math.max(0.6, this.dynamicScale - 0.1);
+        this.slowT = 0;
+        this.resize();
+      }
+    } else if (this.frameAvg < 1 / 58) {
+      this.fastT += dt;
+      this.slowT = 0;
+      if (this.fastT > 6 && this.dynamicScale < 1) {
+        this.dynamicScale = Math.min(1, this.dynamicScale + 0.1);
+        this.fastT = 0;
+        this.resize();
+      }
+    }
+  }
+
   render(dt: number, time: number): void {
+    this.adaptResolution(dt);
     this.updateSun();
     this.lightPool.focusX = this.shadowFocus.x;
     this.lightPool.focusY = this.shadowFocus.y;

@@ -203,6 +203,7 @@ export const MISSION_01: LevelData = {
     { type: 'cache', x: 255.6, y: 6.0, lane: 0, id: 'cache_tower', weapon: 'sniper', rp: 60 },
     // Yard & arena
     { type: 'intel', x: 279, y: 1.2, lane: 1, id: 'intel_override' },
+    { type: 'weapon', x: 274, y: 1.2, lane: 1, weapon: 'prism', id: 'prism_yard' },
     { type: 'ammo', x: 287, y: 1.2, lane: 0, id: 'ammo_yard' },
     { type: 'ordnance', x: 302.5, y: 0.4, lane: 0, id: 'ordnance' },
     { type: 'fuelTank', x: 313, y: 0.4, lane: 1 },
