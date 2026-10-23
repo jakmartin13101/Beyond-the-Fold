@@ -1,7 +1,7 @@
 // Menu screens: title, difficulty, pause, settings, controls, armory, intel archive,
 // intel reader, death and mission results. Keyboard, mouse and gamepad navigable.
 import { SFX } from '../audio/sfx';
-import { ACTIONS, ACTION_LABELS, Action, DEFAULT_BINDINGS, Input, PAD_LABELS, cloneBindings, keyLabel } from '../core/input';
+import { ACTIONS, ACTION_LABELS, Action, DEFAULT_BINDINGS, Input, PAD_LABELS, cloneBindings, keyLabel, readGamepads } from '../core/input';
 import type { SaveData } from '../core/save';
 import type { Settings } from '../core/settings';
 import { DIFFICULTIES } from '../data/enemies';
@@ -196,8 +196,8 @@ export class Menus {
   /** Gamepad navigation (call every frame while menus are open). */
   pollGamepad(): void {
     if (!this.open) return;
-    const pads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
-    const pad = Array.from(pads).find((p) => p && p.connected);
+    const pads = readGamepads();
+    const pad = pads.find((p) => p && p.connected);
     if (!pad) return;
     const pressed = (i: number) => {
       const d = !!pad.buttons[i]?.pressed;
@@ -743,7 +743,7 @@ export class Menus {
     window.addEventListener('keydown', go);
     window.addEventListener('mousedown', go);
     const padTimer = window.setInterval(() => {
-      const pads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
+      const pads = readGamepads();
       for (const p of pads) if (p && p.buttons.some((b) => b.pressed)) go();
     }, 100);
     this.closeAll();

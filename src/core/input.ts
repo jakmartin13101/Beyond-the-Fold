@@ -266,7 +266,7 @@ export class Input {
 
   /** Poll gamepads; call once per rendered frame. */
   pollGamepad(): void {
-    const pads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
+    const pads = readGamepads();
     let pad: Gamepad | null = null;
     for (const p of pads) {
       if (p && p.connected) {
@@ -404,6 +404,15 @@ export class Input {
     if (this.device === 'pad') return PAD_LABELS[a] ?? '?';
     const codes = this.bindings[a];
     return codes.length ? keyLabel(codes[0]) : '—';
+  }
+}
+
+/** Gamepads, or none when the API is missing or blocked (e.g. inside a sandboxed frame). */
+export function readGamepads(): (Gamepad | null)[] {
+  try {
+    return typeof navigator.getGamepads === 'function' ? Array.from(navigator.getGamepads()) : [];
+  } catch {
+    return [];
   }
 }
 

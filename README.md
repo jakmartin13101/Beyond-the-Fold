@@ -18,15 +18,25 @@ Halden Deep Research Station on the outer-rim world **Teskaris** has been silent
 
 The story unfolds through in-engine cinematics, squad radio (Overwatch on the orbiting CSV *Lantern*, the downed pilot Tam, and Kestrel's suit AI WREN), environmental storytelling and three recoverable intel logs.
 
-## Running the game
+## Play
 
-Requirements: Node.js 18+ and a browser with WebGL2 (any current Chrome, Edge, Firefox or Safari).
+You need a browser with WebGL2 (any current Chrome, Edge, Firefox or Safari). There is nothing to install.
+
+- **Play online:** <https://claude.ai/artifact/XoAeCovVAN5jypKh4Lj7FV>. The link is private to its owner until it is shared from the page's Share menu.
+- **Play offline:** download [`Beyond-the-Fold.html`](Beyond-the-Fold.html) (about 1 MB) and double-click it. The whole game is in that one file, including its code, styles and fonts, so it runs straight from disk with no server and no internet connection.
+
+Click once inside the game window to enable sound. Controllers work in the downloaded file; some embedded web views block the Gamepad API.
+
+## Building from source
+
+Requirements: Node.js 18+.
 
 ```bash
 npm install
-npm run dev        # start the dev server, then open the printed URL
-npm run build      # type-check and produce a static build in dist/
-npm run preview    # serve the production build locally
+npm run dev           # start the dev server, then open the printed URL
+npm run build         # type-check and produce a static build in dist/
+npm run preview       # serve the production build locally
+npm run build:single  # rebuild the one-file Beyond-the-Fold.html
 ```
 
 The build in `dist/` is fully static (relative asset paths), so it can be hosted on any static web host, including GitHub Pages.
