@@ -34,7 +34,7 @@ export class CameraController {
   snap(world: World): void {
     const p = world.player;
     this.x = p.x;
-    this.y = p.y + 1.6;
+    this.y = p.y + 2.5;
     this.lookX = 0;
     this.zoom = this.zoneZoom(world);
     this.cineBlend = this.cinematic ? 1 : 0;
@@ -89,7 +89,7 @@ export class CameraController {
       const ahead = clamp(aimDir.x, -1, 1) * 5.5 + clamp(p.vx * 0.15, -1.4, 1.4);
       this.lookX = damp(this.lookX, ahead, 2.2, dt);
       let tx = px + this.lookX;
-      let ty = py + 1.9 + this.zoneYOffset(world) + clamp(aimDir.y, -1, 1) * 1.2;
+      let ty = py + 2.5 + this.zoneYOffset(world) + clamp(aimDir.y, -1, 1) * 1.2;
       this.zoom = damp(this.zoom, this.zoneZoom(world), 1.6, dt);
 
       const halfW = this.halfWidth();
@@ -106,7 +106,7 @@ export class CameraController {
         const a = world.level.boss!.arena;
         tx = lerp(px, boss.x, 0.5);
         tx = clamp(tx, a.left + halfW - 3, a.right - halfW + 3);
-        ty = Math.max(ty, boss.y + 3.6);
+        ty = Math.max(ty, boss.y + 5.2);
       }
       // Never show past the level bounds.
       const b = world.level.bounds;
@@ -117,7 +117,7 @@ export class CameraController {
       const dy = ty - this.y;
       const ylambda = p.onGround ? 3.5 : 1.6;
       if (Math.abs(dy) > 0.25 || p.onGround) this.y = damp(this.y, ty, ylambda, dt);
-      if (py + 1.7 - this.y < -3.5) this.y = py + 1.7 + 3.5;
+      if (py + 2.5 - this.y < -3.5) this.y = py + 2.5 + 3.5;
     }
 
     // Trauma-based shake.
@@ -132,7 +132,7 @@ export class CameraController {
 
     const dist = BASE_DIST * this.zoom;
     const gameplay = {
-      pos: tmpA.set(this.x + sx + this.kickX, this.y + 2.9 * this.zoom + sy + this.kickY, dist),
+      pos: tmpA.set(this.x + sx + this.kickX, this.y + 4.2 * this.zoom + sy + this.kickY, dist),
       target: tmpB.set(this.x + sx * 0.5 + this.kickX, this.y + sy * 0.5 + this.kickY, 0),
       fov: BASE_FOV,
     };

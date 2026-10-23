@@ -69,11 +69,10 @@ export class Game implements CineHost {
   private skipHint: HTMLDivElement;
   private overlayCanvas: HTMLCanvasElement;
   private app: HTMLElement;
-  private missionStartStats = { intelBefore: 0 };
   private pendingIntel: string | null = null;
   /** Test hook: overrides merged into player controls each step. */
   debugControls: Partial<PlayerControls> | null = null;
-  private newlyCollected = new Set<string>();
+  private bossIntroSeen = false;
 
   constructor(app: HTMLElement) {
     this.app = app;
@@ -255,7 +254,6 @@ export class Game implements CineHost {
       }
     };
     w.onIntel = (id) => {
-      this.newlyCollected.add(id);
       if (!this.save.intel.includes(id)) {
         this.save.intel.push(id);
         writeSave(this.save);
@@ -271,9 +269,8 @@ export class Game implements CineHost {
 
   private startMission(cp: CheckpointSave | null): void {
     this.menus.closeAll();
+    this.bossIntroSeen = false;
     this.lastCheckpoint = cp;
-    this.missionStartStats.intelBefore = this.save.intel.length;
-    this.newlyCollected.clear();
     if (!cp) {
       this.save.checkpoint = null;
       writeSave(this.save);
@@ -504,7 +501,13 @@ export class Game implements CineHost {
     if (w.pendingCutscene && this.state === 'playing') {
       const id = w.pendingCutscene;
       w.pendingCutscene = null;
-      if (id === 'boss_intro') this.beginCutscene(bossIntroCutscene(this));
+      if (id === 'boss_intro') {
+        const cs = bossIntroCutscene(this);
+        this.beginCutscene(cs);
+        // After a retry the full entrance is skipped.
+        if (this.bossIntroSeen) cs.skip();
+        this.bossIntroSeen = true;
+      }
       else if (id === 'outro') this.beginCutscene(outroCutscene(this, () => this.finishMission()));
     }
     if (this.pendingIntel && this.state === 'playing') {
@@ -758,6 +761,8 @@ export class Game implements CineHost {
       difficulty: this.difficulty,
     };
     this.state = 'results';
+    this.cineTitle.classList.remove('show');
+    this.titleT = 0;
     this.setLetterbox(false);
     this.hud.setVisible(false);
     this.app.classList.remove('hide-cursor');

@@ -4,7 +4,7 @@ import { DEG, clamp, damp, rand, randSign } from '../core/math';
 import type { VocalKind } from '../core/events';
 import { ENEMIES, EnemyDef } from '../data/enemies';
 import { Actor, DamageResult, NO_DAMAGE } from './entity';
-import { DamageInfo, EntryStyle, GRAVITY, HitPart, Hurtbox, LANE_Z, SpawnDef } from './types';
+import { DamageInfo, EntryStyle, GRAVITY, HitPart, Hurtbox, LANE_Z, SpawnDef, makeDamage } from './types';
 import { WeaponState } from './weaponState';
 import type { World } from './world';
 
@@ -318,7 +318,9 @@ export abstract class Enemy extends Actor {
       this.health = 0;
       this.dead = true;
       this.removed = true;
-      world.onEnemyKilled(this, { amount: 0, type: 'fall', byPlayer: false } as DamageInfo, false);
+      this.cancelAttack(world);
+      this.releaseCover();
+      world.onEnemyKilled(this, makeDamage({ amount: 0, type: 'fall' }), false);
     }
   }
 

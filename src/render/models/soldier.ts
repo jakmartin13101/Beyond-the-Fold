@@ -107,7 +107,7 @@ export class SoldierModel {
     this.shieldShell.scale.set(0.62, 1.12, 0.62);
     this.shieldShell.position.y = 1.0;
     this.root.add(this.shieldShell);
-    this.visorMat = glow(colors.visor, 2.4).clone();
+    this.visorMat = glow(colors.visor, 3.2).clone();
     this.applyVisor();
     this.grenadeProp = gem(0.09, paper(0x5a6a48), 0, 'ico');
     this.grenadeProp.visible = false;
@@ -301,16 +301,16 @@ export class SoldierModel {
     this.head.add(jaw);
     const visor = card(
       [
-        [0.0, 0.0],
-        [0.1, -0.02],
-        [0.12, 0.1],
-        [0.0, 0.12],
+        [-0.02, -0.01],
+        [0.11, -0.03],
+        [0.14, 0.1],
+        [0.0, 0.13],
       ],
-      0.3,
+      0.34,
       c.visor,
     );
     visor.name = 'visor';
-    visor.position.set(0.13, 0.17, 0);
+    visor.position.set(0.12, 0.16, 0);
     this.head.add(visor);
     for (const side of [1, -1]) {
       const ear = prism(0.07, 0.07, 0.05, 6, paper(S));
@@ -362,7 +362,7 @@ export class SoldierModel {
   }
 
   setVisor(color: number): void {
-    this.visorMat.color.set(color).multiplyScalar(2.4);
+    this.visorMat.color.set(color).multiplyScalar(3.2);
   }
 
   private setWeapon(id: string | null): void {

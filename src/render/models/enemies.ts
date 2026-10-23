@@ -387,22 +387,23 @@ export class ThrenModel implements EnemyModel {
     shape.closePath();
     const face = new THREE.Mesh(new THREE.ShapeGeometry(shape), this.panelMat);
     face.userData.keep = true;
-    face.rotation.y = Math.PI / 2;
     g.add(face);
     const frame = card(
       [
-        [-0.08, -1.1],
-        [0.08, -1.1],
-        [0.08, 1.1],
-        [-0.08, 1.1],
+        [-0.06, -1.1],
+        [0.06, -1.1],
+        [0.06, 1.1],
+        [-0.06, 1.1],
       ],
       0.1,
       pal.plate,
     );
-    frame.position.set(0, 0, 0);
+    frame.position.set(-0.62, 0, 0);
     g.add(frame);
     const emitter = gem(0.12, glow(pal.glowC, 2.4), 0, 'oct');
     g.add(emitter);
+    // Angle the barrier toward the viewer so its shape reads clearly from the side.
+    g.rotation.y = Math.PI / 2 - 0.85;
     this.panel = g;
   }
 
